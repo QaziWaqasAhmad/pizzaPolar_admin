@@ -1,42 +1,98 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root{
+    --font-family: 'Poppins', sans-serif;
+    --navbar-ul-color:#5C5C5C;
+}
+h1{
+    font-size: 50px;
+    font-weight: 600;
+    font-family: var(--font-family);
+}
+h2{
+font-size: 32px;
+font-weight: 300;
+font-family: var(--font-family);
+}
+h3{
+font-size: 28px;
+font-weight: 300;
+font-family: var(--font-family);
+}
+h4{
+font-size: 20px;
+font-weight: 300;
+font-family: var(--font-family);
+}
+h5{
+font-size: 15px;
+font-weight: 500;
+font-family: var(--font-family);
+}
+h6{
+font-size: 15px;
+font-weight: 300;
+font-family: var(--font-family);
+}
+p{
+    font-size: 15px;
+    font-weight: 200;
+    font-family: var(--font-family);
+}
+a{
+    text-decoration: none;
+}
+ul li{
+    list-style: none;
+}
+ul li a{
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navbar-ul-color);
+    padding: 10px 20px !important;
+    font-family: var(--font-family);
+}
+.navbar{
+    border-top: 1px solid #F0F0F0;
+    border-bottom: 1px solid #F0F0F0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.cart-icon {
+    position: relative;
   }
-  to {
-    transform: rotate(360deg);
-  }
+  
+  .cart-count {
+    position: absolute;
+    top: 9px;
+    right: -8px;
+    background-color: pink;
+    color: white;
+    border-radius: 50%;
+    padding: 1px 7px;
+    font-size: 14px;
+    font-weight: bold;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.add-to-cart-button{
+    border: 1px solid #F0F0F0;
 }
-
-.card {
-  padding: 2em;
+.add-to-cart-button:hover{
+    background-color: pink;
+    color: white;
 }
-
-.read-the-docs {
-  color: #888;
+.footer{
+    background-color: #F0F0F0;
+}
+.usefull_links h4{
+    margin-left: 2rem;
+}
+.carousel-control-next-icon, .carousel-control-prev-icon {
+    background-color: #1b1919 !important;
+}
+.img-1{
+    border-radius: 15px;
 }

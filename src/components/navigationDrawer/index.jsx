@@ -18,19 +18,28 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CustomAppBar, DrawerHeader, CustomDrawer } from "./styledComponents";
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Dashboard,
 } from "@mui/icons-material";
+import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import useStyles from "./style";
 import { AppContext } from "../../context";
+import Products from "../../constainers/appStack/Products";
 const userData = JSON.parse(localStorage.getItem("user"));
+
+
+
+
+
+
 export default function NavigationDrawer(props) {
   const {openDrawer,setOpenDrawer} = useContext(AppContext);
   const classes = useStyles();
-  // let navigate = useNavigate();
+  const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
@@ -55,9 +64,28 @@ export default function NavigationDrawer(props) {
     setAnchorEl(null);
   };
 
-  const navigateLink = (route) => {
+  const routes = [
+    {
+      icon: <Dashboard/>,
+      path: "/home",
+      label: "Dashboard",
+    },
+    {
+      icon: < LocalPizzaIcon/>,
+      path: "/products",
+      label: "Products",
+    },
+    {
+      icon: <ViewCarouselIcon/>,
+      path: "/banners",
+      label: "Banners",
+    },
+    
+  ];
+
+  const navigateToPage = (route) => {
     localStorage.setItem("toggle_drawer", openDrawer);
-    // navigate(`/${route}`);
+    navigate(route);
   };
 
 
@@ -97,13 +125,13 @@ export default function NavigationDrawer(props) {
               style={{ cursor: "pointer", paddingRight: 0 }}
             >
               <ListItemAvatar>
-                {/* <Avatar>
-                  {userData.role == "Admin" ? (
+                <Avatar>
+                  {/* {userData.role == "Admin" ? (
                     userData?.name?.charAt(0)
-                  ) : (
-                    <img width={40} height={40} src={userData?.logoImage} />
-                  )}
-                </Avatar> */}
+                  ) : ( */}
+                    <img width={40} height={40} src="https://media.licdn.com/dms/image/D4D03AQHB7uIB9yCnjA/profile-displayphoto-shrink_400_400/0/1689335216207?e=1700697600&v=beta&t=VY8xnW3VVL6ccFY_34ges7xT1PMZ8YZqvlH6N5xe890" />
+                  {/* )} */}
+                </Avatar>
               </ListItemAvatar>
               <ListItemText primary={userData?.name} />
             </ListItem>
@@ -142,7 +170,7 @@ export default function NavigationDrawer(props) {
       <CustomDrawer variant="permanent" open={openDrawer}>
         <div
           style={{
-            backgroundColor: openDrawer ? "red" : "#fff",
+            backgroundColor: openDrawer ? "#fdb813" : "#fff",
             paddingBottom: "25px",
           }}
         >
@@ -194,22 +222,27 @@ export default function NavigationDrawer(props) {
             </ListItemAvatar>
           </div>
         </div>
-        <List>
+        <List >
           <>
-          <ListItem
-                    className={classes.navigationStyle}
-                    // onClick={() => navigateLink(route.path)}
-                  >
-                    <ListItemIcon className="">
-                     <Dashboard/>
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={"Salman"}
-                      style={{
-                        display: openDrawer ? "block" : "none",
-                      }}
-                    />
-                  </ListItem>
+          {routes.map((route, index) => (
+             <ListItem
+             key={index}
+             className={classes.navigationStyle}
+             onClick={() => navigateToPage(route.path)} // Navigate to the route's path
+           >
+             <ListItemIcon style={{cursor:"pointer"}}>
+               {route.icon}
+             </ListItemIcon>
+             <ListItemText
+             
+               primary={route.label}
+               style={{
+                 display: openDrawer ? "block" : "none",
+                 cursor:"pointer"
+               }}
+             />
+           </ListItem>
+          ))}
           </>
         </List>
       </CustomDrawer>

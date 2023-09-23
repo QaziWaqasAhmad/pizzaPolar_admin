@@ -1,5 +1,5 @@
 import Api from "../index";
-import { endPoints, requestType } from "../../constants/Variables";
+import { endPoints, requestType } from "../../constants/variables";
 
 //Jobs apis
 

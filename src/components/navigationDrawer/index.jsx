@@ -26,7 +26,21 @@ import {
   Dashboard,
 } from "@mui/icons-material";
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
-import useStyles from "./style";
+import {
+  ProfileHeader,
+  MenuItemStyle,
+  NavigationStyle,
+  DrawerStyle,
+  CustomCard,
+  ActiveBtn,
+  InactiveBtn,
+  Count,
+  AvatarStyle,
+  Title,
+  GlobalBtnStyle,
+  GlobalInputLabel,
+  GlobalDialogContentStyle,
+} from "./style"; // Import your styled components
 import { AppContext } from "../../context";
 import Products from "../../constainers/appStack/Products";
 const userData = JSON.parse(localStorage.getItem("user"));
@@ -38,7 +52,6 @@ const userData = JSON.parse(localStorage.getItem("user"));
 
 export default function NavigationDrawer(props) {
   const {openDrawer,setOpenDrawer} = useContext(AppContext);
-  const classes = useStyles();
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -115,7 +128,7 @@ export default function NavigationDrawer(props) {
 
           <div>
             <ListItem
-              className={classes.profileHeader}
+              className={ProfileHeader}
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
@@ -159,7 +172,7 @@ export default function NavigationDrawer(props) {
                   logout();
                   // window.location.pathname = "/login";
                 }}
-                className={classes.menuItemStyle}
+                className={MenuItemStyle}
               >
                 Logout
               </MenuItem>
@@ -227,7 +240,7 @@ export default function NavigationDrawer(props) {
           {routes.map((route, index) => (
              <ListItem
              key={index}
-             className={classes.navigationStyle}
+             className={NavigationStyle}
              onClick={() => navigateToPage(route.path)} // Navigate to the route's path
            >
              <ListItemIcon style={{cursor:"pointer"}}>

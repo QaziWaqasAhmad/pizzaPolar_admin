@@ -5,12 +5,40 @@ import TextFeilds from "../components/TextFeilds";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { loginAdmin } from "../services/products/Products";
 
 const Login = () => {
+  const [user, setUser] = useState({
+    email:'',
+    password:''
+  });
+  
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+
+
+   const loginUser = () =>{
+       loginAdmin(user).then((res) =>{
+         console.log(res, "dasdasdas");
+        if(res.status === 200){ 
+ 
+        }
+       }).catch((error) =>{
+        console.log(error);
+       })
+   }
+
+
+   const handleOnChange = (e) =>{
+        setUser({
+          ...user,
+          [e.target.name]:e.target.value
+        })
+   }
+
   return (
     <>
       <div className="login">
@@ -18,7 +46,7 @@ const Login = () => {
           <div className="row min-vh-100 ">
             <div className="col-md-7 bg-warning  d-flex justify-content-center align-items-center">
               <div className="logo d-flex justify-content-center align-items-center mx-auto">
-                  <img src={logo} alt="logo" className="w-50" />
+                  <img src={logo} alt="logo" className="w-50" draggable="false" />
               </div>
             </div>
             <div className="col-md-5  d-flex justify-content-center align-items-center ">
@@ -33,7 +61,9 @@ const Login = () => {
                 id="email"
                 className="email-input mt-4"
                 size="small"
-                
+                name="email"
+                value={user.email}
+                onChange={handleOnChange}
                 />  
                <div className="password-input">
                   <TextField
@@ -41,6 +71,8 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     label="Password"
                     className="password-input"
+                    name="password"
+                    onChange={handleOnChange}
                     size="small"
                     InputProps={{
                       endAdornment: (
@@ -64,6 +96,7 @@ const Login = () => {
                 <Buttons
                 name="Login"
                 className="login-button "
+                onClick={loginUser}
                 />
                 </div>
               </div>

@@ -1,6 +1,5 @@
 import axios from "axios";
-let baseUrl = "http://pizzapolarbackend-production.up.railway.app/api/";
-
+let baseUrl = "https://pizzapolarbackend-production-08e2.up.railway.app/api/"; 
 
 const api = async (path, params, method,token) => {
     let options;
@@ -10,7 +9,7 @@ const api = async (path, params, method,token) => {
             "Authorization":token
         },
         method: method,
-        ...(params && { data: JSON.stringify(params) }),  
+        ...(params && { data: JSON.stringify(params)}),  
     };
     return axios(baseUrl + path, options)
         .then((response) => {

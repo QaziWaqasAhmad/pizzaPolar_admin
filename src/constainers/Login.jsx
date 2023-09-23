@@ -21,7 +21,9 @@ const Login = () => {
 
 
    const loginUser = () =>{
-       loginAdmin(user).then((res) =>{
+    // console.log(user,"use===========>");
+    let body={email:"admin@admin.com",password:'123456'}
+       loginAdmin(body).then((res) =>{
          console.log(res, "dasdasdas");
         if(res.status === 200){ 
  

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../assets/logo.png";
 import Buttons from "../components/Buttons";
 import TextFeilds from "../components/TextFeilds";
@@ -6,13 +6,16 @@ import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { loginAdmin } from "../services/products/Products";
+import { AppContext } from "../context";
 
 const Login = () => {
-  const [user, setUser] = useState({
+  const {user, login} = useContext(AppContext)
+  // console.log(user?.token, "sadasdasdasdasdadasdasd")
+  const [userss, setUserss] = useState({
     email:'',
     password:''
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -21,12 +24,12 @@ const Login = () => {
 
 
    const loginUser = () =>{
-    // console.log(user,"use===========>");
-    let body={email:"admin@admin.com",password:'123456'}
-       loginAdmin(body).then((res) =>{
-         console.log(res, "dasdasdas");
+       loginAdmin(userss).then((res) =>{
+        //  console.log(res.data.data, "dasdasdas");
         if(res.status === 200){ 
- 
+          let data = res?.data?.data;
+          localStorage.setItem('users', JSON.stringify(data))
+          login(data)
         }
        }).catch((error) =>{
         console.log(error);
@@ -35,8 +38,8 @@ const Login = () => {
 
 
    const handleOnChange = (e) =>{
-        setUser({
-          ...user,
+        setUserss({
+          ...userss,
           [e.target.name]:e.target.value
         })
    }
@@ -64,7 +67,7 @@ const Login = () => {
                 className="email-input mt-4"
                 size="small"
                 name="email"
-                value={user.email}
+                value={userss.email}
                 onChange={handleOnChange}
                 />  
                <div className="password-input">

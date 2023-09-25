@@ -51,7 +51,7 @@ const userData = JSON.parse(localStorage.getItem("user"));
 
 
 export default function NavigationDrawer(props) {
-  const {openDrawer,setOpenDrawer} = useContext(AppContext);
+  const {openDrawer,setOpenDrawer, logout} = useContext(AppContext);
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -164,11 +164,11 @@ export default function NavigationDrawer(props) {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem
+             <MenuItem
                 onClick={() => {
-                  handleClose();
-                  localStorage.clear();
-                  navigate("/login");
+                  // handleClose();
+                  // localStorage.clear();
+                  // navigate("/");
                   logout();
                   // window.location.pathname = "/login";
                 }}

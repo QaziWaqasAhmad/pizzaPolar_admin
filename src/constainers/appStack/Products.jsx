@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,21 +15,19 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import TextFeilds from "../../components/TextFeilds";
 import DeleteIcon from '@mui/icons-material/Delete';
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+import { addProduct } from "../../services/products/Products";
+import { AppContext } from "../../context";
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
+
+
+
 
 export default function BasicTable() {
+  const {user, login} = useContext(AppContext)
+console.log(user.token, 'sadasdasdasdasda')
 
   const [modal, setModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [options,setOptions]=useState([
     {
@@ -47,9 +45,9 @@ export default function BasicTable() {
 
   const [inputValues,setInputValues]=useState({
     name:"",
-    price:"",
+    price:0,
     description:"",
-    discount:"",
+    discount:0,
     image:"",
     category:""
 
@@ -62,6 +60,25 @@ export default function BasicTable() {
       [name]:value
     })
   }
+
+  const handleOnChangeOptions=(e,mainIndex)=>{
+    const {name,value}=e.target
+    let dummy=[...options]
+    dummy[mainIndex].title = value;
+    console.log(dummy,"dummmmmmmmmmmmm");
+    setOptions(dummy)
+
+  }
+
+
+  const handleOnChangeSuboptions=(e,mainIndex,subIndex)=>{
+    const {name,value}=e.target
+    let dummy=[...options]
+    dummy[mainIndex].subOptions[subIndex].namess = value;
+    console.log(dummy,"dummmmmmmmmmmmm");
+    setOptions(dummy)
+
+  } 
   const fileInputRef = useRef(null);
 
   const handleImageUpload = () => {
@@ -77,8 +94,32 @@ export default function BasicTable() {
   };
 
 
-   const addProductss = ()=>{
-    
+   const handleAddProductss = ()=>{
+    const {name,price,description,discount}=inputValues
+      let body={
+          name,
+          price,
+          description,
+          discount,
+          category:"Special Offers",
+          date : new Date(),
+          image:"https://admin.broadwaypizza.com.pk/Images/ProductImages/special111111.jpg",
+          options:options
+      }
+      setIsLoading(true)
+      addProduct(user.token,body).then((res) => {
+        if(res.status === 200){
+          setIsLoading(false)
+          toggle()
+
+        }else{
+          setIsLoading(false)
+        }
+      }).catch((error) =>{
+        console.log(error);
+        setIsLoading(false)
+      })
+
    }
 
 
@@ -176,13 +217,13 @@ const handleRemoveFlavour = (index, subIndex) => {
                 <div className="text-fields mt-3">
                   <TextFeilds label="Product Name" size="small" value={inputValues.name} onChange={(e)=>handleOnChange(e)} name="name"/>
                   <TextFeilds label="Price" size="small" value={inputValues.price} onChange={(e)=>handleOnChange(e)} name="price"/>
-                  <TextFeilds label="Discount" size="small"  value={inputValues.category} onChange={(e)=>handleOnChange(e)} name="price" />
+                  <TextFeilds label="Discount" size="small"  value={inputValues.discount} onChange={(e)=>handleOnChange(e)} name="discount" />
                   {options.map((item,index)=>{
                     return(
                       <>
                       {/* main field */}
                       <div className="" >
-                      <TextFeilds label="Title" size="small" key={index}/>
+                      <TextFeilds label="Title" size="small" key={index} value={item.title} name="title" onChange={(e)=>handleOnChangeOptions(e,index)}/>
                       <div className=" d-flex align-items-center justify-content-end">
                       <span className="mx-end text-primary" onClick={()=> handleOnAdd()}><AddCircleOutlineIcon/></span>
                       <span className="mx-end text-danger" onClick={()=>handleRemove(index)} ><DeleteIcon/></span>
@@ -194,7 +235,7 @@ const handleRemoveFlavour = (index, subIndex) => {
                             <>
                             {/* flavours field */}
                             <div className="d-flex align-items-center justify-content-start ">
-                            <TextFeilds label="flavour" size="small" className="w-100  text-end" key={salman}/>
+                            <TextFeilds label="flavour" size="small" className="w-100  text-end" key={salman} name="name" value={CurElem.name} onChange={(e)=>handleOnChangeSuboptions(e,index,salman)}/>
                       <p className="mx-end text-primary" onClick={()=> handleOnAddFlavour(index)}><AddCircleOutlineIcon/></p>
                             <p className="mx-end text-danger" onClick={()=>handleRemoveFlavour(index, salman)}><DeleteIcon/></p>
                             </div>
@@ -211,6 +252,9 @@ const handleRemoveFlavour = (index, subIndex) => {
                   <select
                     class="form-select"
                     aria-label="Default select example"
+                    value={inputValues.category}
+                    name="category"
+                    onChange={(e)=>handleOnChange(e)}
                     >
                     <option selected>Category</option>
                     <option value="1">One</option>
@@ -223,12 +267,17 @@ const handleRemoveFlavour = (index, subIndex) => {
                       id="exampleFormControlTextarea1"
                       placeholder="Description"
                       rows="3"
+                      value={inputValues.description} 
+                      onChange={(e)=>handleOnChange(e)} 
+                      name="description"
                     ></textarea>
                   </div>
                 </div>
               </ModalBody>
               <ModalFooter>
+              <div onClick={handleAddProductss}>
                 <Buttons name="Create" />
+              </div>
               </ModalFooter>
             </Modal>
           </div>

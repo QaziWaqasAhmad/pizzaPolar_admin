@@ -6,5 +6,6 @@ export const requestType = {
 };
 export const endPoints = {
     getAllProducts:"getAllProducts",
-    loginAdmin:"loginAdmin"
+    loginAdmin:"loginAdmin",
+    addProduct:"addProduct"
 };

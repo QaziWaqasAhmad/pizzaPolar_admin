@@ -7,13 +7,17 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { loginAdmin } from "../services/products/Products";
 import { AppContext } from "../context";
+import { Loader } from "../components/Loader";
 
 const Login = () => {
-  const {user, login} = useContext(AppContext)
-  // console.log(user?.token, "sadasdasdasdasdadasdasd")
+  const { login } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
   const [userss, setUserss] = useState({
-    email:'',
-    password:''
+    email: '',
+    password: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -21,28 +25,44 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const loginUser = () => {
+    setEmailError('');
+    setPasswordError('');
 
+    if (!userss.email.trim()) {
+      setEmailError("Email field is required");
+      return;
+    }
+    
+    if (!userss.password.trim()) {
+      setPasswordError("Password field is required");
+      return;
+    }
 
-   const loginUser = () =>{
-       loginAdmin(userss).then((res) =>{
-        //  console.log(res.data.data, "dasdasdas");
-        if(res.status === 200){ 
+    setIsLoading(true);
+
+    loginAdmin(userss)
+      .then((res) => {
+        if (res.status === 200) {
           let data = res?.data?.data;
-          localStorage.setItem('users', JSON.stringify(data))
-          login(data)
+          localStorage.setItem("users", JSON.stringify(data));
+          login(data);
         }
-       }).catch((error) =>{
+      })
+      .catch((error) => {
         console.log(error);
-       })
-   }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
-
-   const handleOnChange = (e) =>{
-        setUserss({
-          ...userss,
-          [e.target.name]:e.target.value
-        })
-   }
+  const handleOnChange = (e) => {
+    setUserss({
+      ...userss,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
     <>
@@ -51,34 +71,38 @@ const Login = () => {
           <div className="row min-vh-100 ">
             <div className="col-md-7 bg-warning  d-flex justify-content-center align-items-center">
               <div className="logo d-flex justify-content-center align-items-center mx-auto">
-                  <img src={logo} alt="logo" className="w-50" draggable="false" />
+                <img src={logo} alt="logo" className="w-50" draggable="false" />
               </div>
             </div>
             <div className="col-md-5  d-flex justify-content-center align-items-center ">
               <div className="login-form">
-              <div className="heading mb-4">
-              <h1>PIZZA POLAR</h1>
-              <p>Welcome Back!</p>
-              </div>
-                <TextFeilds
-                label="Email"
-                type="email"
-                id="email"
-                className="email-input mt-4"
-                size="small"
-                name="email"
-                value={userss.email}
-                onChange={handleOnChange}
-                />  
-               <div className="password-input">
+                <div className="heading mb-4">
+                  <h1>PIZZA POLAR</h1>
+                  <p>Welcome Back!</p>
+                </div>
+                <TextField
+                  label="Email"
+                  type="email"
+                  id="email"
+                  className="email-input mt-4"
+                  size="small"
+                  name="email"
+                  fullWidth
+                  value={userss.email}
+                  onChange={handleOnChange}
+                  error={!!emailError}
+                  helperText={emailError}
+                />
+                <div className="password-input">
                   <TextField
-                    id="password"
-                    type={showPassword ? "text" : "password"}
                     label="Password"
-                    className="password-input"
+                    type={showPassword ? "text" : "password"}
+                    className="password-input mt-3"
                     name="password"
                     onChange={handleOnChange}
                     size="small"
+                    error={!!passwordError}
+                    helperText={passwordError}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -95,19 +119,24 @@ const Login = () => {
                 </div>
 
                 <Link>
-                <p className="text-end mt-2" style={{fontSize:"13px"}}>Forgot Password</p>
+                  <p className="text-end mt-2" style={{ fontSize: "13px" }}>
+                    Forgot Password
+                  </p>
                 </Link>
                 <div className="">
-                <Buttons
-                name="Login"
-                className="login-button "
-                onClick={loginUser}
-                />
+                  <Buttons
+                    name="Login"
+                    className="login-button "
+                    onClick={loginUser}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
+          {isLoading && (
+             <Loader isLoading={isLoading} />
+          )}
       </div>
     </>
   );

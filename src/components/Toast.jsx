@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const Toast = () => {
   return (
     <ToastContainer
-      position="top-right"
+      position="top"
       autoClose={1000}
       hideProgressBar={false}
       newestOnTop

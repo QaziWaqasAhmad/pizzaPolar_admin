@@ -76,4 +76,10 @@ input:focus-visible {
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: 9999; 
 }
+.products_images img{
+  max-width: 50px;
+}
+.edit-product{
+  cursor: pointer;
+}
 

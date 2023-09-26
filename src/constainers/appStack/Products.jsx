@@ -21,6 +21,7 @@ import Loader from "../../components/Loader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 export default function BasicTable() {
   const { user } = useContext(AppContext);
@@ -28,15 +29,15 @@ export default function BasicTable() {
   const [nameError, setNameError] = useState("");
   const [priceError, setPriceError] = useState("");
   const [discountError, setDiscountError] = useState("");
-  const [titleError, setTitleError] = useState("");
+  const [titleError, setTitleError] = useState(""); 
   const [flavorError, setflavorError] = useState("");
   const [descError, setDescError] = useState("");
   const [catError, setCatError] = useState("");
   const [productData, setProductData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [updateModal, setUpdateModal] = useState(false);
   const [modal, setModal] = useState(false);
-
+  const [deleteModal, setDeleteModal] = useState(false);
   const [options, setOptions] = useState([
     {
       title: "",
@@ -58,6 +59,11 @@ export default function BasicTable() {
     image: "",
     category: "",
   });
+
+
+   
+
+
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -221,6 +227,8 @@ export default function BasicTable() {
   };
 
   const toggle = () => setModal(!modal);
+  const updateToggle = () => setUpdateModal(!updateModal);
+  const deleteToggle = () => setDeleteModal(!deleteModal);
 
   return (
     <>
@@ -418,49 +426,221 @@ export default function BasicTable() {
               </ModalFooter>
             </Modal>
           </div>
+          
 
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  {/* <TableCell>Id</TableCell> */}
-                  <TableCell align="left">Name</TableCell>
-                  <TableCell align="left">Price</TableCell>
-                  <TableCell align="left">Discount</TableCell>
-                  <TableCell align="left">Date</TableCell>
-                  <TableCell align="left">Category</TableCell>
-                  <TableCell align="left">Status</TableCell>
-                  <TableCell align="left">Edit</TableCell>
-                  <TableCell align="left">Delete</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {productData.map((item, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableHead>
+      <TableRow>
+        <TableCell align="center">Name</TableCell>
+        <TableCell align="center">Price</TableCell>
+        <TableCell align="center">Discount</TableCell>
+        <TableCell align="center">Date</TableCell>
+        <TableCell align="center">Category</TableCell>
+        <TableCell align="center">Status</TableCell>
+        <TableCell align="center">Image</TableCell>
+        <TableCell align="center">Edit</TableCell>
+        <TableCell align="center">Delete</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {productData.map((item, index) => (
+        <TableRow
+          key={index}
+          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+        >
+          <TableCell component="th" scope="row" align="center">
+            {item.name}
+          </TableCell>
+          <TableCell align="center">{item.price}</TableCell>
+          <TableCell align="center">{item.discount}</TableCell>
+          <TableCell align="center">{item.date}</TableCell>
+          <TableCell align="center">{item.category}</TableCell>
+          <TableCell align="center">{item.isShow}</TableCell>
+          <TableCell align="center">
+            <div className="products_images ">
+              <Link to={item.image} target="_blank"> 
+              <img
+                src={item.image}
+                alt="product image"
+                className="img-fluid  rounded-circle"
+              />
+              </Link>
+            </div>
+          </TableCell>
+          <TableCell align="center">
+            <div className="text-success edit-product " onClick={updateToggle}>
+              <BorderColorIcon />
+            </div>
+          </TableCell>
+          <TableCell align="center">
+            <div className="text-danger edit-product" onClick={deleteToggle}>
+              <DeleteIcon />
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+ 
+          <div className="add-product-modal ">
+            <Modal isOpen={updateModal} toggle={updateToggle} className="pt-5 w-100">
+              <ModalHeader toggle={updateToggle}>UPDATE PRODUCTS</ModalHeader>
+              <ModalBody
+                className="p-4"
+                style={{ maxHeight: "60vh", overflowY: "auto" }}
+              >
+                <div className="image-section bg-secondary d-flex align-items-center justify-content-center">
+                  <i onClick={handleImageUpload}>
+                    <CameraAltIcon className="camera-icon" />
+                  </i>
+                </div>
+                {/* Hidden input for file selection */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  id="image"
+                  error={!!imageError}
+                  helperText={imageError}
+                />
+
+                <div className="text-fields mt-3">
+                  <TextFeilds
+                    label="Product Name"
+                    size="small"
+                    value={inputValues.name}
+                    onChange={(e) => handleOnChange(e)}
+                    name="name"
+                    id="name"
+                    error={!!nameError}
+                    helperText={nameError}
+                  />
+
+                  <TextFeilds
+                    label="Price"
+                    size="small"
+                    id="price"
+                    error={!!priceError}
+                    helperText={priceError}
+                    value={inputValues.price}
+                    onChange={(e) => handleOnChange(e)}
+                    name="price"
+                  />
+                  <TextFeilds
+                    label="Discount"
+                    size="small"
+                    id="discount"
+                    error={!!discountError}
+                    helperText={discountError}
+                    value={inputValues.discount}
+                    onChange={(e) => handleOnChange(e)}
+                    name="discount"
+                  />
+                  {options.map((item, index) => {
+                    return (
+                      <>
+                        {/* main field */}
+                        <div className="">
+                          <TextFeilds
+                            label="Title"
+                            size="small"
+                            key={index}
+                            value={item.title}
+                            name="title"
+                            onChange={(e) => handleOnChangeOptions(e, index)}
+                          />
+                          <div className=" d-flex align-items-center justify-content-end">
+                            <span
+                              className="mx-end text-primary"
+                              onClick={() => handleOnAdd()}
+                            >
+                              <AddCircleOutlineIcon />
+                            </span>
+                            <span
+                              className="mx-end text-danger"
+                              onClick={() => handleRemove(index)}
+                            >
+                              <DeleteIcon />
+                            </span>
+                          </div>
+                          {item.subOptions.map((CurElem, salman) => (
+                            <>
+                              {/* flavours field */}
+                              <div className="d-flex align-items-center justify-content-start ">
+                                <TextFeilds
+                                  label="flavour"
+                                  size="small"
+                                  className="w-100  text-end"
+                                  key={salman}
+                                  name="name"
+                                  value={CurElem.name}
+                                  onChange={(e) =>
+                                    handleOnChangeSuboptions(e, index, salman)
+                                  }
+                                />
+                                <p
+                                  className="mx-end text-primary"
+                                  onClick={() => handleOnAddFlavour(index)}
+                                >
+                                  <AddCircleOutlineIcon />
+                                </p>
+                                <p
+                                  className="mx-end text-danger"
+                                  onClick={() =>
+                                    handleRemoveFlavour(index, salman)
+                                  }
+                                >
+                                  <DeleteIcon />
+                                </p>
+                              </div>
+                            </>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })}
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={inputValues.category}
+                    name="category"
+                    onChange={(e) => handleOnChange(e)}
+                    id="category"
+                    error={!!catError}
+                    helperText={catError}
                   >
-                    {/* <TableCell component="th" scope="row">
-                  {item.name}
-                </TableCell> */}
-                    {/* <TableCell align="right">{item._id}</TableCell> */}
-                    <TableCell align="left">{item.name}</TableCell>
-                    {/* <TableCell align="right">{item.image}</TableCell> */}
-                    {/* <TableCell align="right">{item.description}</TableCell> */}
-                    <TableCell align="left">{item.price}</TableCell>
-                    <TableCell align="left">{item.discount}</TableCell>
-                    <TableCell align="left">{item.date}</TableCell>
-                    <TableCell align="left">{item.category}</TableCell>
-                    <TableCell align="left">{item.isShow}</TableCell>
-                    <TableCell align="left">
-                      <BorderColorIcon />
-                    </TableCell>
-                    <TableCell align="left">Delete</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    <option selected>Category</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                  <div class="mb-3 mt-3">
+                    <textarea
+                      class="form-control"
+                      id="description"
+                      placeholder="Description"
+                      rows="3"
+                      value={inputValues.description}
+                      onChange={(e) => handleOnChange(e)}
+                      name="description"
+                      error={!!descError}
+                      helperText={descError}
+                    ></textarea>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <div onClick={handleAddProductss}>
+                  <Buttons name="Update" />
+                </div>
+              </ModalFooter>
+            </Modal>
+          </div> 
+          
         </div>
       </NavigationDrawer>
     </>

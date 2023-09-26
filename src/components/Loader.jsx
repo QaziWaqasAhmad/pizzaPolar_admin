@@ -4,7 +4,7 @@ import  SyncLoader  from "react-spinners/SyncLoader";
 
 
 
-export function Loader({ isLoading }) {
+const Loader=({isLoading})=>{
   let [color, setColor] = useState("#000");
 
   return (
@@ -20,5 +20,8 @@ export function Loader({ isLoading }) {
     </div>
   );
 }
+
+
+export default Loader
 
 

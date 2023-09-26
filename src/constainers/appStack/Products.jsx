@@ -17,7 +17,10 @@ import TextFeilds from "../../components/TextFeilds";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { addProduct, getAllProducts } from "../../services/products/Products";
 import { AppContext } from "../../context";
-import { Loader } from "../../components/Loader";
+import Loader from "../../components/Loader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 export default function BasicTable() {
   const { user } = useContext(AppContext);
@@ -29,10 +32,8 @@ export default function BasicTable() {
   const [flavorError, setflavorError] = useState("");
   const [descError, setDescError] = useState("");
   const [catError, setCatError] = useState("");
-  const [productData, setProductData] = useState([])
+  const [productData, setProductData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-
 
   const [modal, setModal] = useState(false);
 
@@ -77,32 +78,34 @@ export default function BasicTable() {
   const handleOnChangeSuboptions = (e, mainIndex, subIndex) => {
     const { name, value } = e.target;
     let dummy = [...options];
-    dummy[mainIndex].subOptions[subIndex].namess = value;
+    dummy[mainIndex].subOptions[subIndex].name = value;
     console.log(dummy, "dummmmmmmmmmmmm");
     setOptions(dummy);
   };
   const fileInputRef = useRef(null);
 
-  useEffect(()=>{
-    getProductsData()
-  },[])
-  
-  const getProductsData = () =>{
-    getAllProducts(user.token).then((res)=>{
-      // console.log(res?.data?.data, "productssssss")
-      setIsLoading(true)
-    if(res.status === 200){
-      let data = res?.data?.data;
-      setProductData(data)
-     
-    }
-    }).catch((error)=>{
-      console.log(error)
-     
-    }) .finally(() => {
-      setIsLoading(false);
-    });
-  }
+  useEffect(() => {
+    getProductsData();
+  }, []);
+
+  const getProductsData = () => {
+    setIsLoading(true)
+    getAllProducts(user.token)
+      .then((res) => {
+        // console.log(res?.data?.data, "productssssss")
+        setIsLoading(false);
+        if (res.status === 200) {
+          let data = res?.data?.data;
+          setProductData(data);
+        }
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const handleAddProductss = () => {
     const { name, price, description, discount } = inputValues;
@@ -152,16 +155,19 @@ export default function BasicTable() {
     } else {
       setDiscountError("");
     }
-
+    setIsLoading(true)
     addProduct(user.token, body)
       .then((res) => {
+        setIsLoading(true)
         if (res.status === 200) {
-          getProductsData()
+          getProductsData();
           toggle();
+          toast.success("Product added successfully");
         }
       })
       .catch((error) => {
-        console.log(error);
+        setIsLoading(true)
+        toast.error(error);
       });
   };
 
@@ -176,8 +182,6 @@ export default function BasicTable() {
       console.log("Selected file:", selectedFile);
     }
   };
-
-
 
   const handleRemove = (index) => {
     let mummy = [...options];
@@ -221,7 +225,22 @@ export default function BasicTable() {
   return (
     <>
       <NavigationDrawer>
+      {isLoading &&
+        <Loader isLoading={isLoading} />
+      }
         <div>
+          <ToastContainer
+            position="top-right"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+
           <div className="top-section text-center pt-3 mb-5">
             <div className="container">
               <div className="row">
@@ -400,8 +419,8 @@ export default function BasicTable() {
             </Modal>
           </div>
 
-          <TableContainer component={Paper} >
-            <Table sx={{ minWidth: 650 }}  aria-label="simple table">
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   {/* <TableCell>Id</TableCell> */}
@@ -416,37 +435,32 @@ export default function BasicTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {isLoading ? (
-             <Loader isLoading={isLoading} />
-          ):(
-            productData.map((item,index) => (
-              <TableRow
-                key={index}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                {/* <TableCell component="th" scope="row">
+                {productData.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    {/* <TableCell component="th" scope="row">
                   {item.name}
                 </TableCell> */}
-                {/* <TableCell align="right">{item._id}</TableCell> */}
-                <TableCell align="left">{item.name}</TableCell>
-                {/* <TableCell align="right">{item.image}</TableCell> */}
-                {/* <TableCell align="right">{item.description}</TableCell> */}
-                <TableCell align="left">{item.price}</TableCell>
-                <TableCell align="left">{item.discount}</TableCell>
-                <TableCell align="left">{item.date}</TableCell>
-                <TableCell align="left">{item.category}</TableCell> 
-                <TableCell align="left">{item.isShow}</TableCell> 
-                <TableCell align="left">Edit</TableCell> 
-                <TableCell align="left">Delete</TableCell> 
-              </TableRow>
-            ))
-          )
-          }
-                
+                    {/* <TableCell align="right">{item._id}</TableCell> */}
+                    <TableCell align="left">{item.name}</TableCell>
+                    {/* <TableCell align="right">{item.image}</TableCell> */}
+                    {/* <TableCell align="right">{item.description}</TableCell> */}
+                    <TableCell align="left">{item.price}</TableCell>
+                    <TableCell align="left">{item.discount}</TableCell>
+                    <TableCell align="left">{item.date}</TableCell>
+                    <TableCell align="left">{item.category}</TableCell>
+                    <TableCell align="left">{item.isShow}</TableCell>
+                    <TableCell align="left">
+                      <BorderColorIcon />
+                    </TableCell>
+                    <TableCell align="left">Delete</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
-         
         </div>
       </NavigationDrawer>
     </>

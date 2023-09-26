@@ -7,7 +7,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { loginAdmin } from "../services/products/Products";
 import { AppContext } from "../context";
-import { Loader } from "../components/Loader";
+import Loader from "../components/Loader";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const { login } = useContext(AppContext);
@@ -47,6 +49,7 @@ const Login = () => {
           let data = res?.data?.data;
           localStorage.setItem("users", JSON.stringify(data));
           login(data);
+          toast.success("hello")
         }
       })
       .catch((error) => {
@@ -66,6 +69,18 @@ const Login = () => {
 
   return (
     <>
+    <ToastContainer
+      position="top-right"
+      autoClose={1000}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick
+      // rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+    />
       <div className="login">
         <div className="container-fluid">
           <div className="row min-vh-100 ">
@@ -138,6 +153,8 @@ const Login = () => {
              <Loader isLoading={isLoading} />
           )}
       </div>
+    
+
     </>
   );
 };

@@ -22,6 +22,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ImageCompressor from 'image-compressor.js';
+import axios from "axios";
 
 export default function BasicTable() {
   const { user } = useContext(AppContext);
@@ -181,11 +183,34 @@ export default function BasicTable() {
     fileInputRef.current.click();
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async(e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // You can handle the selected file here (e.g., upload it to a server)
-      console.log("Selected file:", selectedFile);
+      const imageCompressor = new ImageCompressor();
+      const compressedImage = await imageCompressor.compress(selectedFile, {
+        quality: 0.6, // Adjust the quality as needed (0.6 is just an example)
+        maxWidth: 800, // Set the maximum width of the compressed image
+        maxHeight: 600, // Set the maximum height of the compressed image
+      });
+      setIsLoading(true);
+      const form = new FormData();
+      form.append("image", compressedImage);
+      try {
+        let res = await axios.post("https://amberstore.pk/upload.php", form);
+        // let res = await axios.post("https://pizzafollia.com/upload.php", form);
+        if (res.status == 200) {
+          setIsLoading(false);
+          console.log(res,'urlllllllllllllll');
+          setInputValues({
+            ...inputValues,
+            image:res?.data?.url
+          })
+        }else{
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setIsLoading(false);
+      }
     }
   };
 

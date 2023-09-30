@@ -43,10 +43,9 @@ export default function BasicTable() {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(2);
-  const [pageSize, setPageSize] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  console.log(totalPages, "totalPages")
   
 
 
@@ -129,9 +128,9 @@ export default function BasicTable() {
         if (res.status === 200) {
           let data = res?.data?.data;
           setProductData(data);
-          let cPage = getResponse.data.data.currentPage;
-        let tPage = getResponse.data.data.totalPages;
-        tPage = tPage * pageSize;
+          let cPage = res?.data?.currentPage;
+        let tPage = res?.data?.totalPages;
+        tPage = tPage *pageSize;
         // console.log("Current: ", cPage)
         // console.log("Total: ", tPage) 
         setCurrentPage(cPage);
@@ -250,7 +249,6 @@ export default function BasicTable() {
   const handleRemove = (index) => {
     let mummy = [...options];
     mummy.splice(index, 1);
-    console.log(mummy, "muummdmdmdmdmmd");
     setOptions(mummy);
   };
   const handleRemoveFlavour = (index, subIndex) => {

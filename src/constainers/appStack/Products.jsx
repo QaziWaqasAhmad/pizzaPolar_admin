@@ -15,15 +15,16 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import TextFeilds from "../../components/TextFeilds";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { addProduct, getAllProducts } from "../../services/products/Products";
+import { addProduct, deleteProduct, getAllProducts } from "../../services/products/Products";
 import { AppContext } from "../../context";
 import Loader from "../../components/Loader";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css"; 
 import BorderColorIcon from "@mui/icons-material/BorderColor";
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import ImageCompressor from 'image-compressor.js';
 import axios from "axios";
+import swal from "sweetalert";
+import { Pagination } from "antd";
 
 export default function BasicTable() {
   const { user } = useContext(AppContext);
@@ -40,6 +41,18 @@ export default function BasicTable() {
   const [updateModal, setUpdateModal] = useState(false);
   const [modal, setModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(2);
+  const [pageSize, setPageSize] = useState(5);
+
+  console.log(totalPages, "totalPages")
+  
+
+
+
+
+
   const [options, setOptions] = useState([
     {
       title: "",
@@ -61,10 +74,6 @@ export default function BasicTable() {
     image: "",
     category: "",
   });
-
-
-   
-
 
 
   const handleOnChange = (e) => {
@@ -94,17 +103,41 @@ export default function BasicTable() {
 
   useEffect(() => {
     getProductsData();
-  }, []);
+  }, [currentPage]);
+
+   const productDelete = () =>{
+    deleteProduct(user.token, deleteId).then((res)=>{
+     if(res.status === 200){
+      console.table( "product deleted")
+      // const updatedProducts = productData.filter((product) => product._id !== deleteId);
+      //   setProductData(updatedProducts);
+
+      const updatedProducts = productData.filter((product)=> product._id !== deleteId)
+      setProductData(updatedProducts)
+     } 
+    }).catch((error)=>{
+      toast.error(error)
+    })
+   }
 
   const getProductsData = () => {
     setIsLoading(true)
-    getAllProducts(user.token)
+    getAllProducts(user.token,currentPage)
       .then((res) => {
         // console.log(res?.data?.data, "productssssss")
         setIsLoading(false);
         if (res.status === 200) {
           let data = res?.data?.data;
           setProductData(data);
+          let cPage = getResponse.data.data.currentPage;
+        let tPage = getResponse.data.data.totalPages;
+        tPage = tPage * pageSize;
+        // console.log("Current: ", cPage)
+        // console.log("Total: ", tPage) 
+        setCurrentPage(cPage);
+        setTotalPages(tPage);
+
+       
         }
       })
       .catch((error) => {
@@ -252,8 +285,29 @@ export default function BasicTable() {
   };
 
   const toggle = () => setModal(!modal);
-  const updateToggle = () => setUpdateModal(!updateModal);
-  const deleteToggle = () => setDeleteModal(!deleteModal);
+  const updateToggle = () =>{
+     setUpdateModal(!updateModal);
+    }
+  const deleteToggle = (id) => {
+    setDeleteId(id)
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this imaginary file!",
+      icon: "warning", 
+      buttons: true,
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        productDelete()
+        swal("Poof! Your Product  has been deleted!", { 
+          icon: "success",
+        });
+      } else {
+        swal("Your Product is safe!");
+      }
+    })
+  }
 
   return (
     <>
@@ -469,7 +523,7 @@ export default function BasicTable() {
       </TableRow>
     </TableHead>
     <TableBody>
-      {productData.map((item, index) => (
+      {productData.map((item, index) =>  (
         <TableRow
           key={index}
           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -499,7 +553,7 @@ export default function BasicTable() {
             </div>
           </TableCell>
           <TableCell align="center">
-            <div className="text-danger edit-product" onClick={deleteToggle}>
+            <div className="text-danger edit-product" onClick={() => deleteToggle(item._id)}>  
               <DeleteIcon />
             </div>
           </TableCell>
@@ -508,6 +562,19 @@ export default function BasicTable() {
     </TableBody>
   </Table>
 </TableContainer>
+
+<Pagination
+          className="pagination"
+          total={totalPages}
+          current={currentPage}
+          onChange={(page) => {
+            setCurrentPage(page);
+          }}
+        />
+
+
+
+
  
           <div className="add-product-modal ">
             <Modal isOpen={updateModal} toggle={updateToggle} className="pt-5 w-100">

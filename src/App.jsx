@@ -6,9 +6,11 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './constainers/Login'
 import Products from './constainers/appStack/Products'
 import Banners from './constainers/appStack/Banners'
+import Categories from './constainers/appStack/Categories'
 
 function App() {
 
+  
 
 
   useEffect(()=>{
@@ -26,6 +28,7 @@ function App() {
       <Route path='/home' element={<Home/>}/>
       <Route path='/products' element={<Products/>}/>
       <Route path='/banners' element={<Banners/>}/>
+      <Route path='/categories' element={<Categories/>}/>
     </Routes>
       ):(
       <Navigate to="/" replace/>

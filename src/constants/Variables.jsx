@@ -7,5 +7,10 @@ export const requestType = {
 export const endPoints = {
     getAllProducts:"getAllProducts",
     loginAdmin:"loginAdmin",
-    addProduct:"addProduct"
+    addProduct:"addProduct",
+    deleteProduct:"deleteProduct",
+    createCategory:"createCategory",
+    getAllCategories:"getAllCategories",     
+    updateCategory:"updateCategory",
+    deleteCategory:"deleteCategory",
 };

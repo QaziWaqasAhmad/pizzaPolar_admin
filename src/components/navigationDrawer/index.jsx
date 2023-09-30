@@ -43,6 +43,7 @@ import {
 } from "./style"; // Import your styled components
 import { AppContext } from "../../context";
 import Products from "../../constainers/appStack/Products";
+import CategoryIcon from '@mui/icons-material/Category';
 const userData = JSON.parse(localStorage.getItem("user"));
 
 
@@ -51,7 +52,7 @@ const userData = JSON.parse(localStorage.getItem("user"));
 
 
 export default function NavigationDrawer(props) {
-  const {openDrawer,setOpenDrawer, logout} = useContext(AppContext);
+  const {openDrawer,setOpenDrawer, logout, user} = useContext(AppContext);
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -89,10 +90,16 @@ export default function NavigationDrawer(props) {
       label: "Products",
     },
     {
+      icon: <CategoryIcon/>,
+      path: "/categories",
+      label: "Categories",
+    },
+    {
       icon: <ViewCarouselIcon/>,
       path: "/banners",
       label: "Banners",
     },
+    
     
   ];
 
@@ -146,7 +153,7 @@ export default function NavigationDrawer(props) {
                   {/* )} */}
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={userData?.name} />
+              <ListItemText primary={user?.name} />
             </ListItem>
 
             <Menu
